@@ -7,7 +7,6 @@ import {
   Code2,
   Globe,
   Link,
-  Mail,
   MapPin,
   Menu,
   Phone,
@@ -51,6 +50,15 @@ const timeline = [
   "Coding Challenge",
   "Final Presentation",
   "Winner Announcement",
+];
+
+const galleryItems = [
+  "Students Coding",
+  "Innovation Sessions",
+  "Team Collaboration",
+  "Tech Workshops",
+  "Mentorship",
+  "Demo Day",
 ];
 
 const socialLinks = [
@@ -249,14 +257,15 @@ export function HackathonLanding() {
         <section className="mx-auto w-full max-w-6xl px-4 pb-12 sm:pb-16">
           <h2 className="mb-5 font-heading text-2xl">Gallery</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {["Students Coding", "Innovation Sessions", "Team Collaboration", "Tech Workshops", "Mentorship", "Demo Day"].map(
-              (title) => (
-                <GlowCard key={title} className="min-h-36 bg-gradient-to-br from-white/5 to-[#7B2FF7]/20">
-                  <p className="text-sm text-white/70">Placeholder</p>
-                  <p className="mt-1 text-lg font-semibold">{title}</p>
-                </GlowCard>
-              ),
-            )}
+            {galleryItems.map((title) => (
+              <GlowCard
+                key={title}
+                className="min-h-36 bg-gradient-to-br from-white/5 to-[#7B2FF7]/20"
+              >
+                <p className="text-sm text-white/70">Placeholder</p>
+                <p className="mt-1 text-lg font-semibold">{title}</p>
+              </GlowCard>
+            ))}
           </div>
         </section>
       </main>
@@ -278,7 +287,7 @@ export function HackathonLanding() {
                 <Phone size={16} className="text-[#00D9FF]" /> +234 XXX XXX XXXX
               </li>
               <li className="flex items-center gap-2">
-                <Mail size={16} className="text-[#00D9FF]" /> www.hltsltd.com
+                <Globe size={16} className="text-[#00D9FF]" /> www.hltsltd.com
               </li>
             </ul>
           </div>
