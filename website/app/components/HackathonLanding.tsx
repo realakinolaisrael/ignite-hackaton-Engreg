@@ -19,7 +19,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CountdownTimer } from "./CountdownTimer";
 import { GlowCard } from "./GlowCard";
 import { RegistrationForm } from "./RegistrationForm";
@@ -31,6 +31,7 @@ const navItems = [
   { href: "#prizes", label: "Prizes" },
   { href: "#timeline", label: "Timeline" },
   { href: "#register", label: "Register" },
+  { href: "/admin/registrations", label: "Admin" },
   { href: "#contact", label: "Contact" },
 ];
 
@@ -70,6 +71,40 @@ const socialLinks = [
 
 export function HackathonLanding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [liveStats, setLiveStats] = useState({ studentCount: 0, teamCount: 0 });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadStats() {
+      try {
+        const response = await fetch("/api/registrations", { cache: "no-store" });
+        const payload = (await response.json()) as {
+          studentCount?: number;
+          teamCount?: number;
+        };
+
+        if (!cancelled) {
+          setLiveStats({
+            studentCount: Number.isFinite(payload.studentCount) ? payload.studentCount ?? 0 : 0,
+            teamCount: Number.isFinite(payload.teamCount) ? payload.teamCount ?? 0 : 0,
+          });
+        }
+      } catch {
+        if (!cancelled) {
+          setLiveStats((previous) => previous);
+        }
+      }
+    }
+
+    loadStats();
+    const intervalId = window.setInterval(loadStats, 15000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   return (
     <div className="relative overflow-hidden bg-[#050816] text-[#F5F5F5]">
@@ -160,8 +195,8 @@ export function HackathonLanding() {
         </section>
 
         <section className="mx-auto grid w-full max-w-6xl gap-3 px-4 pb-12 sm:grid-cols-3 sm:pb-16">
-          <StatsCounter label="Participants" value={150} suffix="+" />
-          <StatsCounter label="Innovation Teams" value={35} suffix="+" />
+          <StatsCounter label="Registered Students" value={liveStats.studentCount} suffix="" />
+          <StatsCounter label="Innovation Teams" value={liveStats.teamCount} suffix="" />
           <StatsCounter label="Workshops" value={10} />
         </section>
 
@@ -305,6 +340,12 @@ export function HackathonLanding() {
                 </a>
               ))}
             </div>
+            <a
+              href="/admin/registrations"
+              className="mt-4 inline-flex rounded-lg border border-[#00D9FF]/30 bg-[#00D9FF]/10 px-4 py-2 text-sm font-medium text-[#00D9FF] transition hover:border-[#00D9FF] hover:bg-[#00D9FF]/15"
+            >
+              View registrations
+            </a>
           </div>
         </div>
       </footer>
