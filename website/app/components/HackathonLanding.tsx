@@ -273,14 +273,7 @@ export function HackathonLanding() {
         <section id="timeline" className="mx-auto w-full max-w-6xl px-4 pb-12 sm:pb-16">
           <h2 className="mb-5 font-heading text-2xl">Timeline</h2>
           <GlowCard>
-            <ol className="space-y-4 border-l-2 border-[#7B2FF7]/60 pl-6">
-              {timeline.map((step) => (
-                <li key={step} className="relative">
-                  <span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-[#00D9FF] shadow-[0_0_10px_#00D9FF]" />
-                  <p className="font-medium">{step}</p>
-                </li>
-              ))}
-            </ol>
+            <TimelineList />
           </GlowCard>
         </section>
 
@@ -380,5 +373,48 @@ function BackgroundEffects() {
         />
       ))}
     </div>
+  );
+}
+
+function TimelineList() {
+  const [items, setItems] = useState<{ id: string; title: string; started: boolean }[]>(
+    timeline.map((t, i) => ({ id: String(i), title: t, started: false })),
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const res = await fetch("/api/timeline", { cache: "no-store" });
+        const payload = (await res.json().catch(() => null)) as { timeline?: { id: string; title: string; started: boolean; updatedAt: string }[] } | null;
+        if (!cancelled && payload && Array.isArray(payload.timeline)) {
+          setItems(payload.timeline.map((it) => ({ id: it.id, title: it.title, started: !!it.started })));
+        }
+      } catch {
+        // keep defaults
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <ol className="space-y-4 border-l-2 border-[#7B2FF7]/60 pl-6">
+      {items.map((step) => (
+        <li key={step.id} className="relative flex items-center gap-3">
+          <span
+            className={`absolute -left-[31px] top-1 h-3 w-3 rounded-full shadow-[0_0_10px] ${
+              step.started ? "bg-green-400 shadow-[0_0_10px_#4ade80]" : "bg-[#00D9FF] shadow-[0_0_10px_#00D9FF]"
+            }`}
+          />
+          <p className="font-medium">{step.title}</p>
+          {step.started ? <span className="ml-2 rounded-full bg-green-600/20 px-2 py-0.5 text-xs text-green-300">Started</span> : null}
+        </li>
+      ))}
+    </ol>
   );
 }

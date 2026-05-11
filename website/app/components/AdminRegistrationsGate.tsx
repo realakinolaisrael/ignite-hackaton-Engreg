@@ -44,6 +44,35 @@ export default function AdminRegistrationsGate() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [registrations, setRegistrations] = useState<RegistrationRecord[]>([]);
+  const [timeline, setTimeline] = useState<{
+    id: string;
+    title: string;
+    started: boolean;
+    updatedAt: string;
+  }[]>([]);
+
+  const [timelineLoading, setTimelineLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isUnlocked) return;
+    let cancelled = false;
+    async function loadTimeline() {
+      setTimelineLoading(true);
+      try {
+        const res = await fetch("/api/timeline", { cache: "no-store" });
+        const payload = (await res.json()) as { timeline?: { id: string; title: string; started: boolean; updatedAt: string }[] };
+        if (!cancelled) setTimeline(Array.isArray(payload.timeline) ? payload.timeline : []);
+      } catch {
+        if (!cancelled) setTimeline([]);
+      } finally {
+        if (!cancelled) setTimelineLoading(false);
+      }
+    }
+    loadTimeline();
+    return () => {
+      cancelled = true;
+    };
+  }, [isUnlocked]);
   const [projectStatuses, setProjectStatuses] = useState<Record<string, ProjectStatus>>({});
 
   useEffect(() => {
@@ -277,6 +306,50 @@ export default function AdminRegistrationsGate() {
             </Link>
           </div>
         </div>
+
+        <section className="mx-auto w-full max-w-6xl px-4">
+          <div className="mb-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+            <h3 className="font-medium">Timeline Controls</h3>
+            <p className="text-sm text-white/70">Toggle timeline items when they start.</p>
+
+            <div className="mt-3 grid gap-2">
+              {timelineLoading ? (
+                <p className="text-sm text-white/70">Loading timeline...</p>
+              ) : (
+                timeline.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between gap-3 rounded-lg border border-white/5 px-3 py-2">
+                    <div>
+                      <p className="font-medium">{item.title}</p>
+                      <p className="text-xs text-white/70">{item.started ? `Started • ${new Date(item.updatedAt).toLocaleString()}` : "Not started"}</p>
+                    </div>
+                    <div>
+                      <button
+                        onClick={async () => {
+                          const next = !item.started;
+                          // optimistic update
+                          setTimeline((prev) => prev.map((p) => (p.id === item.id ? { ...p, started: next, updatedAt: new Date().toISOString() } : p)));
+                          try {
+                            await fetch("/api/timeline", {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ id: item.id, started: next }),
+                            });
+                          } catch {
+                            // rollback on error
+                            setTimeline((prev) => prev.map((p) => (p.id === item.id ? { ...p, started: item.started } : p)));
+                          }
+                        }}
+                        className={`inline-flex items-center gap-2 rounded-md px-3 py-1 text-sm font-medium ${item.started ? "bg-red-600 text-white" : "bg-green-500 text-white"}`}
+                      >
+                        {item.started ? "Mark Not Started" : "Mark Started"}
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <SummaryCard

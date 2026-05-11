@@ -1,0 +1,38 @@
+[
+  {
+    "id": "72384e41-2df5-476a-98fe-8b3461abab4f",
+    "title": "Registration Opens",
+    "started": false,
+    "updatedAt": "2026-05-11T17:23:56.059Z"
+  },
+  {
+    "id": "0390e06a-a0e2-42c4-90d7-452e6e1eebd1",
+    "title": "Team Formation",
+    "started": false,
+    "updatedAt": "2026-05-11T17:23:56.059Z"
+  },
+  {
+    "id": "df999833-dfbf-4daa-a416-60aaf96f401f",
+    "title": "Training Sessions",
+    "started": false,
+    "updatedAt": "2026-05-11T17:23:56.059Z"
+  },
+  {
+    "id": "74428f17-3fec-4934-8dd5-b960ef4af586",
+    "title": "Coding Challenge",
+    "started": false,
+    "updatedAt": "2026-05-11T17:23:56.059Z"
+  },
+  {
+    "id": "14a90a90-fb85-4b63-afd0-eb14dcefdff8",
+    "title": "Final Presentation",
+    "started": false,
+    "updatedAt": "2026-05-11T17:23:56.059Z"
+  },
+  {
+    "id": "81d7b56f-c025-4821-8468-0c0f3f9daebf",
+    "title": "Winner Announcement",
+    "started": false,
+    "updatedAt": "2026-05-11T17:23:56.059Z"
+  }
+]
