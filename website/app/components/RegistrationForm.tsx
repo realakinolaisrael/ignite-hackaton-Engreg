@@ -41,7 +41,9 @@ export function RegistrationForm() {
       ),
     }));
 
-    setMemberErrors((previous) => previous.map((error, errorIndex) => (errorIndex === index ? "" : error)));
+    setMemberErrors((previous) =>
+      previous.map((error, errorIndex) => (errorIndex === index ? "" : error)),
+    );
     setErrors((previous) => ({ ...previous, memberNames: undefined }));
     setSubmitError("");
   };
@@ -72,6 +74,7 @@ export function RegistrationForm() {
     const validation = validateRegistration(formData);
     setErrors(validation.fieldErrors);
     setMemberErrors(validation.memberErrors);
+
     if (hasRegistrationErrors(validation)) {
       setSubmitted(false);
       return;
@@ -99,6 +102,7 @@ export function RegistrationForm() {
 
       setSubmitted(true);
       setFormData(initialData);
+      setMemberErrors([]);
     } catch (error) {
       setSubmitted(false);
       setSubmitError(error instanceof Error ? error.message : "Failed to save registration");
@@ -137,10 +141,18 @@ export function RegistrationForm() {
         />
         <InputField
           label="Team Name"
+          name="teamName"
+          value={formData.teamName}
+          onChange={onChange}
+          error={errors.teamName}
+        />
+      </div>
+
+      <InputField
         label="Representative Phone"
         name="representativePhone"
         value={formData.representativePhone}
-          error={errors.teamName}
+        onChange={onChange}
         error={errors.representativePhone}
       />
 
@@ -214,14 +226,13 @@ export function RegistrationForm() {
       >
         {isSubmitting ? "Saving..." : "Submit Registration"}
       </button>
+
       {submitted ? (
         <p className="text-sm text-green-300">
           Registration submitted successfully. View all submissions at /admin/registrations.
         </p>
       ) : null}
-      {submitError ? (
-        <p className="text-sm text-red-300">{submitError}</p>
-      ) : null}
+      {submitError ? <p className="text-sm text-red-300">{submitError}</p> : null}
     </form>
   );
 }
@@ -263,14 +274,6 @@ function InputField({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-      />
-      {error ? <span className="mt-1 block text-xs text-red-300">{error}</span> : null}
-    </label>
-  );
-}
-        type={type}
-        value={value}
-        onChange={onChange}
       />
       {error ? <span className="mt-1 block text-xs text-red-300">{error}</span> : null}
     </label>
