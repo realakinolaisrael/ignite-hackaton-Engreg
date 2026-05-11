@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "5cc2718a-8341-4224-8035-ffe7624d6629",
+    "submittedAt": "2026-05-11T20:48:16.556Z",
+    "representativeName": "Test Rep",
+    "representativeEmail": "rep@example.com",
+    "representativePhone": "+2347012345678",
+    "schoolClass": "SS2A",
+    "teamName": "Team Alpha",
+    "githubUrl": "https://github.com/vercel/next.js",
+    "memberNames": [
+      "Member One",
+      "Member Two"
+    ]
+  }
+]
